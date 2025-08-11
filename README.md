@@ -49,6 +49,9 @@ Place Orders: Finalize and place orders directly from the cart.
 
 Table Reservations: Book a table by providing customer name, time, and number of guests. View current reservations.
 
+
+
+
 Admin Features:
 
 Inventory Management: View and update the stock levels for all menu items.
