@@ -1,0 +1,1125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restaurant Management System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            background-color: #f3f4f6;
+            color: #1f2937;
+        }
+        .btn-nav {
+            @apply px-4 py-2 rounded-lg font-semibold transition-colors duration-300 shadow-md;
+        }
+        .btn-nav-active {
+            @apply bg-blue-600 text-white hover:bg-blue-700;
+        }
+        .btn-nav-inactive {
+            @apply bg-gray-200 text-gray-800 hover:bg-gray-300;
+        }
+        .message-box {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #4CAF50; /* Green for success */
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+        .message-box.error {
+            background-color: #f44336; /* Red for error */
+        }
+        .message-box.show {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body class="min-h-screen p-4 sm:p-6">
+
+    <div id="message-box" class="message-box"></div>
+
+    <header class="bg-white rounded-lg shadow-lg p-4 mb-6 max-w-6xl mx-auto flex flex-col sm:flex-row justify-between items-center">
+        <h1 class="text-4xl font-extrabold text-blue-700 mb-4 sm:mb-0">Restaurant Dashboard</h1>
+        <nav class="flex flex-wrap gap-3" id="main-nav">
+            <button id="nav-menu" class="btn-nav btn-nav-active">Menu</button>
+            <button id="nav-order" class="btn-nav btn-nav-inactive">Your Order</button>
+            <button id="nav-reserve" class="btn-nav btn-nav-inactive">Reservations</button>
+            <button id="nav-admin" class="btn-nav btn-nav-inactive hidden">Admin Panel</button>
+            <button id="nav-login" class="btn-nav btn-nav-inactive">Login</button>
+            <button id="nav-register" class="btn-nav btn-nav-inactive">Register</button>
+            <button id="nav-logout" class="btn-nav btn-nav-inactive hidden">Logout</button>
+        </nav>
+    </header>
+
+    <main class="max-w-6xl mx-auto">
+        
+        <div id="login-view" class="view hidden p-6 bg-white rounded-lg shadow-lg max-w-md mx-auto">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">Login</h2>
+            <form id="login-form" class="space-y-4">
+                <div>
+                    <label for="login-username" class="block text-gray-700 text-sm font-bold mb-2">Username:</label>
+                    <input type="text" id="login-username" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                </div>
+                <div>
+                    <label for="login-password" class="block text-gray-700 text-sm font-bold mb-2">Password:</label>
+                    <input type="password" id="login-password" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                </div>
+                <button type="submit" class="w-full py-3 px-6 bg-blue-600 text-white rounded-lg font-bold text-xl hover:bg-blue-700 transition-colors duration-300 shadow-lg">Login</button>
+            </form>
+        </div>
+
+    
+        <div id="register-view" class="view hidden p-6 bg-white rounded-lg shadow-lg max-w-md mx-auto">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">Register</h2>
+            <form id="register-form" class="space-y-4">
+                <div>
+                    <label for="register-username" class="block text-gray-700 text-sm font-bold mb-2">Username:</label>
+                    <input type="text" id="register-username" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                </div>
+                <div>
+                    <label for="register-password" class="block text-gray-700 text-sm font-bold mb-2">Password:</label>
+                    <input type="password" id="register-password" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                </div>
+                <div>
+                    <label for="register-first-name" class="block text-gray-700 text-sm font-bold mb-2">First Name:</label>
+                    <input type="text" id="register-first-name" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                </div>
+                <div>
+                    <label for="register-last-name" class="block text-gray-700 text-sm font-bold mb-2">Last Name:</label>
+                    <input type="text" id="register-last-name" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                </div>
+                <div>
+                    <label for="register-email" class="block text-gray-700 text-sm font-bold mb-2">Email:</label>
+                    <input type="email" id="register-email" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                </div>
+                <button type="submit" class="w-full py-3 px-6 bg-green-600 text-white rounded-lg font-bold text-xl hover:bg-green-700 transition-colors duration-300 shadow-lg">Register</button>
+            </form>
+        </div>
+
+        
+        <div id="menu-view" class="view p-6 bg-white rounded-lg shadow-lg max-w-4xl mx-auto">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">Our Menu</h2>
+            <div id="menu-items-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                
+            </div>
+            <p id="menu-loading" class="text-center text-blue-600 hidden">Loading menu items...</p>
+            <p id="menu-error" class="text-center text-red-600 hidden"></p>
+            <p id="menu-empty" class="text-center text-gray-600 hidden">No menu items available.</p>
+        </div>
+
+        
+        <div id="order-view" class="view hidden p-6 bg-white rounded-lg shadow-lg max-w-3xl mx-auto">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">Your Order</h2>
+            <div id="order-cart-container" class="space-y-4 mb-6">
+                
+            </div>
+            <p id="order-empty" class="text-center text-gray-600 text-lg">Your cart is empty. Go to menu to add items!</p>
+            <div id="order-summary" class="hidden">
+                <div class="text-right text-2xl font-bold text-gray-900 mb-6">
+                    Total: $<span id="order-total">0.00</span>
+                </div>
+                <button id="place-order-btn" class="w-full py-3 px-6 bg-blue-600 text-white rounded-lg font-bold text-xl hover:bg-blue-700 transition-colors duration-300 shadow-lg">
+                    Place Order
+                </button>
+            </div>
+        </div>
+
+        
+        <div id="reserve-view" class="view hidden p-6 bg-white rounded-lg shadow-lg max-w-2xl mx-auto">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">Table Reservation</h2>
+            <p id="reserve-loading" class="text-center text-blue-600 hidden">Loading tables...</p>
+            <p id="reserve-error" class="text-center text-red-600 hidden"></p>
+            <form id="reservation-form" class="space-y-4">
+                <div>
+                    <label for="reservation-customerName" class="block text-gray-700 text-sm font-bold mb-2">
+                      Customer Name:
+                    </label>
+                    <input
+                      type="text"
+                      id="reservation-customerName"
+                      class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                      required
+                    />
+                </div>
+                <div>
+                    <label for="reservation-time" class="block text-gray-700 text-sm font-bold mb-2">
+                      Reservation Time:
+                    </label>
+                    <input
+                      type="datetime-local"
+                      id="reservation-time"
+                      class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                      required
+                    />
+                </div>
+                <div>
+                    <label for="reservation-guests" class="block text-gray-700 text-sm font-bold mb-2">
+                      Number of Guests:
+                    </label>
+                    <input
+                      type="number"
+                      id="reservation-guests"
+                      class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                      min="1"
+                      required
+                    />
+                </div>
+                <div>
+                    <label for="reservation-table" class="block text-gray-700 text-sm font-bold mb-2">
+                      Select Table:
+                    </label>
+                    <select
+                      id="reservation-table"
+                      class="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                      required
+                    >
+                      <option value="">-- Select an available table --</option>
+                      
+                    </select>
+                    <p id="no-available-tables" class="text-red-500 text-sm mt-2 hidden">No tables currently available.</p>
+                </div>
+                <button
+                  type="submit"
+                  id="confirm-reservation-btn"
+                  class="w-full py-3 px-6 rounded-lg font-bold text-xl transition-colors duration-300 shadow-lg bg-purple-600 text-white hover:bg-purple-700"
+                >
+                  Confirm Reservation
+                </button>
+            </form>
+
+            <h3 class="text-2xl font-bold text-gray-800 mt-8 mb-4 text-center">Current Reservations</h3>
+            <p id="reservations-loading" class="text-center text-blue-600 hidden">Loading reservations...</p>
+            <p id="reservations-error" class="text-center text-red-600 hidden"></p>
+            <ul id="current-reservations-list" class="space-y-2">
+                
+            </ul>
+            <p id="reservations-empty" class="text-center text-gray-600 hidden">No active reservations.</p>
+        </div>
+
+        
+        <div id="admin-view" class="view hidden p-6 bg-white rounded-lg shadow-lg max-w-4xl mx-auto">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">Admin Panel</h2>
+
+            
+            <h3 class="text-2xl font-bold text-gray-800 mb-4">Inventory Management</h3>
+            <p id="admin-menu-loading" class="text-center text-blue-600 hidden">Loading inventory...</p>
+            <p id="admin-menu-error" class="text-center text-red-600 hidden"></p>
+            <div class="overflow-x-auto mb-8">
+                <table class="min-w-full bg-white border border-gray-200 rounded-lg">
+                    <thead>
+                        <tr class="bg-gray-100 text-gray-600 uppercase text-sm leading-normal">
+                            <th class="py-3 px-6 text-left">Item Name</th>
+                            <th class="py-3 px-6 text-left">Category</th>
+                            <th class="py-3 px-6 text-left">Current Stock</th>
+                            <th class="py-3 px-6 text-left">Update Stock</th>
+                        </tr>
+                    </thead>
+                    <tbody id="admin-inventory-table" class="text-gray-700 text-sm font-light">
+                        
+                    </tbody>
+                </table>
+            </div>
+
+            
+            <h3 class="text-2xl font-bold text-gray-800 mt-8 mb-4">Table Availability</h3>
+            <p id="admin-tables-loading" class="text-center text-blue-600 hidden">Loading table status...</p>
+            <p id="admin-tables-error" class="text-center text-red-600 hidden"></p>
+            <div id="admin-tables-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+            
+            </div>
+
+        
+            <h3 class="text-2xl font-bold text-gray-800 mt-8 mb-4">Order Management</h3>
+            <p id="admin-orders-loading" class="text-center text-blue-600 hidden">Loading orders...</p>
+            <p id="admin-orders-error" class="text-center text-red-600 hidden"></p>
+            <div id="admin-orders-container" class="space-y-6">
+
+            </div>
+            <p id="admin-orders-empty" class="text-center text-gray-600 hidden">No orders to display.</p>
+        </div>
+    </main>
+
+    <script>
+        const API_BASE_URL = 'http://127.0.0.1:8000/api';
+
+        let currentView = 'menu';
+        let menuItems = [];
+        let orderCart = [];
+        let reservations = [];
+        let tables = [];
+        let orders = [];
+
+        
+        let isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+        let authToken = localStorage.getItem('authToken');
+        let userRole = localStorage.getItem('userRole');
+
+        const navButtons = document.querySelectorAll('#main-nav button');
+        const views = document.querySelectorAll('.view');
+        const messageBox = document.getElementById('message-box');
+
+        const navAdmin = document.getElementById('nav-admin');
+        const navLogin = document.getElementById('nav-login');
+        const navRegister = document.getElementById('nav-register');
+        const navLogout = document.getElementById('nav-logout');
+
+        const loginForm = document.getElementById('login-form');
+        const registerForm = document.getElementById('register-form');
+
+        function showMessage(message, type = 'success') {
+            messageBox.textContent = message;
+            messageBox.className = `message-box show ${type}`;
+            setTimeout(() => {
+                messageBox.className = 'message-box';
+            }, 3000);
+        }
+
+        function switchView(viewId) {
+            views.forEach(view => view.classList.add('hidden'));
+            document.getElementById(viewId).classList.remove('hidden');
+
+            navButtons.forEach(button => {
+                if (button.id === `nav-${viewId.replace('-view', '')}`) {
+                    button.classList.add('btn-nav-active');
+                    button.classList.remove('btn-nav-inactive');
+                } else {
+                    button.classList.remove('btn-nav-active');
+                    button.classList.add('btn-nav-inactive');
+                }
+            });
+            currentView = viewId.replace('-view', '');
+            updateNavVisibility();
+        }
+
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        
+
+        function setAuthStatus(loggedIn, token = null, role = null) {
+            isLoggedIn = loggedIn;
+            authToken = token;
+            userRole = role;
+
+            if (loggedIn) {
+                localStorage.setItem('isLoggedIn', 'true');
+                localStorage.setItem('authToken', token);
+                localStorage.setItem('userRole', role);
+            } else {
+                localStorage.removeItem('isLoggedIn');
+                localStorage.removeItem('authToken');
+                localStorage.removeItem('userRole');
+            }
+            updateNavVisibility();
+        }
+
+        async function loginUser(username, password) {
+            try {
+                const csrftoken = getCookie('csrftoken');
+                const response = await fetch(`${API_BASE_URL}/login/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrftoken,
+                    },
+                    body: JSON.stringify({ username, password }),
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(JSON.stringify(errorData));
+                }
+
+                const data = await response.json();
+                setAuthStatus(true, data.token, data.role);
+                showMessage('Login successful!', 'success');
+                switchView('menu-view');
+                await fetchAllData();
+            } catch (error) {
+                console.error("Login error:", error);
+                showMessage(`Login failed: ${error.message}`, 'error');
+            }
+        }
+
+        async function registerUser(username, password, first_name, last_name, email) {
+            try {
+                const csrftoken = getCookie('csrftoken');
+                const response = await fetch(`${API_BASE_URL}/register/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrftoken,
+                    },
+                    body: JSON.stringify({ username, password, first_name, last_name, email }),
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(JSON.stringify(errorData));
+                }
+
+                const data = await response.json();
+                showMessage('Registration successful! Please login.', 'success');
+                switchView('login-view');
+            } catch (error) {
+                console.error("Registration error:", error);
+                showMessage(`Registration failed: ${error.message}`, 'error');
+            }
+        }
+
+        function logoutUser() {
+            setAuthStatus(false);
+            showMessage('Logged out successfully!');
+            switchView('menu-view');
+            fetchAllData(); 
+        }
+
+        
+
+        async function fetchData(url, loadingElement, errorElement, emptyElement = null) {
+            loadingElement.classList.remove('hidden');
+            errorElement.classList.add('hidden');
+            if (emptyElement) emptyElement.classList.add('hidden');
+
+            const headers = {
+                'Content-Type': 'application/json',
+            };
+
+            const csrftoken = getCookie('csrftoken');
+            if (csrftoken) {
+                headers['X-CSRFToken'] = csrftoken;
+            }
+
+            if (isLoggedIn && authToken) {
+                headers['Authorization'] = `Token ${authToken}`;
+            }
+
+            try {
+                const response = await fetch(url, { headers: headers });
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    let errorMessage = `HTTP error! Status: ${response.status}`;
+                    try {
+                        const errorJson = JSON.parse(errorText);
+                        errorMessage += ` - ${JSON.stringify(errorJson)}`;
+                    } catch (e) {
+                        errorMessage += ` - ${errorText}`;
+                    }
+                    throw new Error(errorMessage);
+                }
+                const data = await response.json();
+                if (emptyElement && data.length === 0) {
+                    emptyElement.classList.remove('hidden');
+                }
+                return data;
+            } catch (error) {
+                console.error(`Error fetching from ${url}:`, error);
+                errorElement.textContent = `Failed to load data: ${error.message}. Please try again.`;
+                errorElement.classList.remove('hidden');
+                return null;
+            } finally {
+                loadingElement.classList.add('hidden');
+            }
+        }
+
+        async function fetchAllData() {
+            
+            menuItems = await fetchData(`${API_BASE_URL}/menu-items/`, document.getElementById('menu-loading'), document.getElementById('menu-error'), document.getElementById('menu-empty')) || [];
+            tables = await fetchData(`${API_BASE_URL}/tables/`, document.getElementById('reserve-loading'), document.getElementById('reserve-error')) || [];
+
+            
+            if (isLoggedIn) {
+                reservations = await fetchData(`${API_BASE_URL}/reservations/`, document.getElementById('reservations-loading'), document.getElementById('reservations-error'), document.getElementById('reservations-empty')) || [];
+                if (userRole === 'admin') {
+                    orders = await fetchData(`${API_BASE_URL}/orders/`, document.getElementById('admin-orders-loading'), document.getElementById('admin-orders-error'), document.getElementById('admin-orders-empty')) || [];
+                }
+            } else {
+                
+                reservations = [];
+                orders = [];
+            }
+
+            renderAllViews();
+        }
+
+    
+
+        function renderMenuItems() {
+            const container = document.getElementById('menu-items-container');
+            container.innerHTML = '';
+
+            if (!Array.isArray(menuItems) || menuItems.length === 0) {
+                document.getElementById('menu-empty').classList.remove('hidden');
+                return;
+            }
+            document.getElementById('menu-empty').classList.add('hidden');
+
+            menuItems.forEach(item => {
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'border border-gray-200 rounded-lg p-4 flex flex-col items-center text-center shadow-sm hover:shadow-md transition-shadow duration-300';
+                itemDiv.innerHTML = `
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">${item.name}</h3>
+                    <p class="text-gray-600 mb-1">Category: ${item.category}</p>
+                    <p class="text-gray-800 font-bold text-lg mb-3">$${parseFloat(item.price).toFixed(2)}</p>
+                    <p class="text-sm text-gray-500 mb-3">In Stock: ${item.stock}</p>
+                    <button
+                        data-item-id="${item.id}"
+                        class="add-to-cart-btn w-full py-2 px-4 rounded-lg font-semibold transition-colors duration-300 ${
+                            item.stock <= 0 ? 'bg-gray-400 cursor-not-allowed' : 'bg-green-500 hover:bg-green-600 text-white shadow-md'
+                        }"
+                        ${item.stock <= 0 ? 'disabled' : ''}
+                    >
+                        ${item.stock <= 0 ? 'Out of Stock' : 'Add to Cart'}
+                    </button>
+                `;
+                container.appendChild(itemDiv);
+            });
+
+            document.querySelectorAll('.add-to-cart-btn').forEach(button => {
+                button.addEventListener('click', (event) => {
+                    const itemId = parseInt(event.target.dataset.itemId);
+                    const item = menuItems.find(i => i.id === itemId);
+                    if (item) addToCart(item);
+                });
+            });
+        }
+
+        function renderOrderCart() {
+            const container = document.getElementById('order-cart-container');
+            const orderTotalSpan = document.getElementById('order-total');
+            const orderSummaryDiv = document.getElementById('order-summary');
+            const orderEmptyP = document.getElementById('order-empty');
+
+            container.innerHTML = '';
+            let total = 0;
+
+            if (!Array.isArray(orderCart) || orderCart.length === 0) {
+                orderEmptyP.classList.remove('hidden');
+                orderSummaryDiv.classList.add('hidden');
+                return;
+            }
+
+            orderEmptyP.classList.add('hidden');
+            orderSummaryDiv.classList.remove('hidden');
+
+            orderCart.forEach(item => {
+                total += parseFloat(item.price) * item.quantity;
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'flex items-center justify-between border-b border-gray-200 pb-3';
+                itemDiv.innerHTML = `
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-700">${item.name}</h3>
+                        <p class="text-gray-600">$${parseFloat(item.price).toFixed(2)} x ${item.quantity}</p>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <button data-item-id="${item.id}" data-action="decrement" class="update-cart-qty-btn bg-red-400 text-white rounded-full w-8 h-8 flex items-center justify-center text-xl font-bold hover:bg-red-500 transition-colors duration-200">
+                            -
+                        </button>
+                        <span class="text-lg font-medium">${item.quantity}</span>
+                        <button data-item-id="${item.id}" data-action="increment" class="update-cart-qty-btn bg-green-400 text-white rounded-full w-8 h-8 flex items-center justify-center text-xl font-bold hover:bg-green-500 transition-colors duration-200">
+                            +
+                        </button>
+                        <button data-item-id="${item.id}" class="remove-from-cart-btn ml-4 text-red-500 hover:text-red-700 transition-colors duration-200">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                        </button>
+                    </div>
+                `;
+                container.appendChild(itemDiv);
+            });
+
+            orderTotalSpan.textContent = total.toFixed(2);
+
+            document.querySelectorAll('.update-cart-qty-btn').forEach(button => {
+                button.addEventListener('click', (event) => {
+                    const itemId = parseInt(event.target.dataset.itemId);
+                    const action = event.target.dataset.action;
+                    const cartItem = orderCart.find(i => i.id === itemId);
+                    if (cartItem) {
+                        let newQuantity = cartItem.quantity;
+                        if (action === 'increment') {
+                            newQuantity++;
+                        } else if (action === 'decrement') {
+                            newQuantity--;
+                        }
+                        updateCartQuantity(itemId, newQuantity);
+                    }
+                });
+            });
+
+            document.querySelectorAll('.remove-from-cart-btn').forEach(button => {
+                button.addEventListener('click', (event) => {
+                    const itemId = parseInt(event.target.dataset.itemId);
+                    removeFromCart(itemId);
+                });
+            });
+        }
+
+        function renderReservationForm() {
+            const selectElement = document.getElementById('reservation-table');
+            const noTablesMessage = document.getElementById('no-available-tables');
+            const confirmBtn = document.getElementById('confirm-reservation-btn');
+
+            selectElement.innerHTML = '<option value="">-- Select an available table --</option>';
+
+            if (!Array.isArray(tables)) {
+                noTablesMessage.classList.remove('hidden');
+                confirmBtn.disabled = true;
+                return;
+            }
+
+            const availableTables = tables.filter(table => table.is_available);
+
+            if (availableTables.length === 0) {
+                noTablesMessage.classList.remove('hidden');
+                confirmBtn.disabled = true;
+            } else {
+                noTablesMessage.classList.add('hidden');
+                confirmBtn.disabled = false;
+                availableTables.forEach(table => {
+                    const option = document.createElement('option');
+                    option.value = table.id;
+                    option.textContent = `Table ${table.table_number} (Capacity: ${table.capacity})`;
+                    selectElement.appendChild(option);
+                });
+            }
+        }
+
+        function renderCurrentReservations() {
+            const list = document.getElementById('current-reservations-list');
+            const emptyP = document.getElementById('reservations-empty');
+            list.innerHTML = '';
+
+            if (!Array.isArray(reservations) || reservations.length === 0) {
+                emptyP.classList.remove('hidden');
+                return;
+            }
+            emptyP.classList.add('hidden');
+
+            reservations.forEach(res => {
+                const listItem = document.createElement('li');
+                listItem.className = 'bg-gray-50 p-3 rounded-md shadow-sm';
+                listItem.innerHTML = `
+                    <p><span class="font-semibold">Customer:</span> ${res.customer_name}</p>
+                    <p><span class="font-semibold">Table:</span> ${res.table_number}</p>
+                    <p><span class="font-semibold">Guests:</span> ${res.number_of_guests}</p>
+                    <p><span class="font-semibold">Time:</span> ${new Date(res.reservation_time).toLocaleString()}</p>
+                    <p><span class="font-semibold">Confirmed:</span> ${res.is_confirmed ? 'Yes' : 'No'}</p>
+                `;
+                list.appendChild(listItem);
+            });
+        }
+
+        function renderAdminInventory() {
+            const tableBody = document.getElementById('admin-inventory-table');
+            tableBody.innerHTML = '';
+
+            if (!isLoggedIn || userRole !== 'admin') {
+                const messageRow = document.createElement('tr');
+                messageRow.innerHTML = `<td colspan="4" class="py-3 px-6 text-center text-gray-500">You must be logged in as an admin to view inventory.</td>`;
+                tableBody.appendChild(messageRow);
+                return;
+            }
+
+            if (!Array.isArray(menuItems) || menuItems.length === 0) {
+                const row = document.createElement('tr');
+                row.innerHTML = `<td colspan="4" class="py-3 px-6 text-center text-gray-500">No inventory items to display.</td>`;
+                tableBody.appendChild(row);
+                return;
+            }
+
+            menuItems.forEach(item => {
+                const row = document.createElement('tr');
+                row.className = 'border-b border-gray-200 hover:bg-gray-50';
+                row.innerHTML = `
+                    <td class="py-3 px-6 text-left whitespace-nowrap">${item.name}</td>
+                    <td class="py-3 px-6 text-left">${item.category}</td>
+                    <td class="py-3 px-6 text-left">${item.stock}</td>
+                    <td class="py-3 px-6 text-left">
+                        <input
+                            type="number"
+                            value="${item.stock}"
+                            data-item-id="${item.id}"
+                            class="admin-stock-input w-24 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            min="0"
+                        />
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+
+            document.querySelectorAll('.admin-stock-input').forEach(input => {
+                input.addEventListener('change', (event) => {
+                    const itemId = parseInt(event.target.dataset.itemId);
+                    const newStock = parseInt(event.target.value, 10);
+                    updateInventory(itemId, newStock);
+                });
+            });
+        }
+
+        function renderAdminTables() {
+            const container = document.getElementById('admin-tables-container');
+            container.innerHTML = '';
+
+            if (!isLoggedIn || userRole !== 'admin') {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'col-span-full text-center text-gray-600';
+                messageDiv.textContent = 'You must be logged in as an admin to view table status.';
+                container.appendChild(messageDiv);
+                return;
+            }
+
+            if (!Array.isArray(tables)) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'col-span-full text-center text-gray-600';
+                messageDiv.textContent = 'No tables to display.';
+                container.appendChild(messageDiv);
+                return;
+            }
+
+            if (tables.length === 0) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'col-span-full text-center text-gray-600';
+                messageDiv.textContent = 'No tables to display.';
+                container.appendChild(messageDiv);
+                return;
+            }
+
+            tables.forEach(table => {
+                const tableDiv = document.createElement('div');
+                tableDiv.className = `p-4 rounded-lg shadow-sm text-center ${table.is_available ? 'bg-green-100 border-green-300' : 'bg-red-100 border-red-300'}`;
+                tableDiv.innerHTML = `
+                    <p class="text-xl font-semibold">Table ${table.table_number}</p>
+                    <p class="text-gray-700">Capacity: ${table.capacity}</p>
+                    <p class="font-bold ${table.is_available ? 'text-green-700' : 'text-red-700'}">
+                        ${table.is_available ? 'Available' : 'Occupied'}
+                    </p>
+                    <button
+                        data-table-id="${table.id}"
+                        data-is-available="${table.is_available}"
+                        class="toggle-table-availability-btn mt-2 px-3 py-1 rounded-md text-white text-sm ${table.is_available ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600'}"
+                    >
+                        Mark as ${table.is_available ? 'Occupied' : 'Available'}
+                    </button>
+                `;
+                container.appendChild(tableDiv);
+            });
+
+            document.querySelectorAll('.toggle-table-availability-btn').forEach(button => {
+                button.addEventListener('click', (event) => {
+                    const tableId = parseInt(event.target.dataset.tableId);
+                    const isAvailable = event.target.dataset.isAvailable === 'true';
+                    updateTableAvailability(tableId, !isAvailable);
+                });
+            });
+        }
+
+        function renderAdminOrders() {
+            const container = document.getElementById('admin-orders-container');
+            const emptyP = document.getElementById('admin-orders-empty');
+            container.innerHTML = '';
+
+            if (!isLoggedIn || userRole !== 'admin') {
+                emptyP.classList.remove('hidden');
+                emptyP.textContent = "You must be logged in as an admin to view orders.";
+                return;
+            }
+
+            if (!Array.isArray(orders) || orders.length === 0) {
+                emptyP.classList.remove('hidden');
+                emptyP.textContent = "No orders to display.";
+                return;
+            }
+            emptyP.classList.add('hidden');
+
+            orders.forEach(order => {
+                const orderDiv = document.createElement('div');
+                orderDiv.className = 'bg-gray-50 p-4 rounded-lg shadow-sm border border-gray-200';
+                orderDiv.innerHTML = `
+                    <div class="flex justify-between items-center mb-3 border-b pb-2">
+                        <h4 class="text-lg font-bold text-gray-800">Order #${order.id}</h4>
+                        <span class="px-3 py-1 rounded-full text-sm font-semibold ${
+                            order.status === 'pending' ? 'bg-yellow-200 text-yellow-800' :
+                            order.status === 'preparing' ? 'bg-blue-200 text-blue-800' :
+                            order.status === 'ready' ? 'bg-green-200 text-green-800' :
+                            order.status === 'completed' ? 'bg-gray-200 text-gray-800' :
+                            'bg-red-200 text-red-800'
+                        }">
+                            ${order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+                        </span>
+                    </div>
+                    <p class="text-gray-700">
+                        <span class="font-semibold">Customer:</span> ${order.customer_name || 'N/A'}
+                        ${order.table ? `<span class="ml-4"><span class="font-semibold">Table:</span> ${order.table_number}</span>` : ''}
+                    </p>
+                    <p class="text-gray-700"><span class="font-semibold">Time:</span> ${new Date(order.order_time).toLocaleString()}</p>
+                    <p class="text-gray-700"><span class="font-semibold">Total:</span> $${parseFloat(order.total_amount).toFixed(2)}</p>
+
+                    <div class="mt-4">
+                        <h5 class="font-semibold text-gray-700 mb-2">Items:</h5>
+                        <ul class="list-disc list-inside text-gray-600">
+                            ${!Array.isArray(order.items) || order.items.length === 0 ? '<li>No items in this order.</li>' :
+                                order.items.map(item => `
+                                    <li>${item.quantity} x ${item.menu_item_name} ($${parseFloat(item.price_at_order).toFixed(2)} each)</li>
+                                `).join('')
+                            }
+                        </ul>
+                    </div>
+
+                    <div class="mt-4 flex flex-wrap gap-2">
+                        <select
+                            data-order-id="${order.id}"
+                            class="order-status-select p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        >
+                            <option value="pending" ${order.status === 'pending' ? 'selected' : ''}>Pending</option>
+                            <option value="preparing" ${order.status === 'preparing' ? 'selected' : ''}>Preparing</option>
+                            <option value="ready" ${order.status === 'ready' ? 'selected' : ''}>Ready for Pickup/Serve</option>
+                            <option value="completed" ${order.status === 'completed' ? 'selected' : ''}>Completed</option>
+                            <option value="cancelled" ${order.status === 'cancelled' ? 'selected' : ''}>Cancelled</option>
+                        </select>
+                    </div>
+                `;
+                container.appendChild(orderDiv);
+            });
+
+            document.querySelectorAll('.order-status-select').forEach(select => {
+                select.addEventListener('change', (event) => {
+                    const orderId = parseInt(event.target.dataset.orderId);
+                    const newStatus = event.target.value;
+                    updateOrderStatus(orderId, newStatus);
+                });
+            });
+        }
+
+
+
+        function addToCart(item) {
+            const existingItemIndex = orderCart.findIndex(cartItem => cartItem.id === item.id);
+            if (existingItemIndex > -1) {
+                orderCart[existingItemIndex].quantity += 1;
+            } else {
+                orderCart.push({ ...item, quantity: 1 });
+            }
+            showMessage(`${item.name} added to cart!`);
+            renderOrderCart();
+        }
+
+        function updateCartQuantity(itemId, newQuantity) {
+            const itemIndex = orderCart.findIndex(cartItem => cartItem.id === itemId);
+            if (itemIndex > -1) {
+                if (newQuantity <= 0) {
+                    orderCart.splice(itemIndex, 1);
+                } else {
+                    orderCart[itemIndex].quantity = newQuantity;
+                }
+            }
+            renderOrderCart();
+        }
+
+        function removeFromCart(itemId) {
+            orderCart = orderCart.filter(cartItem => cartItem.id !== itemId);
+            showMessage('Item removed from cart.', 'error');
+            renderOrderCart();
+        }
+
+        
+
+        async function placeOrder() {
+            if (orderCart.length === 0) {
+                showMessage('Your cart is empty!', 'error');
+                return;
+            }
+
+            try {
+                const csrftoken = getCookie('csrftoken');
+                const headers = {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrftoken,
+                };
+                if (isLoggedIn && authToken) {
+                    headers['Authorization'] = `Token ${authToken}`;
+                }
+
+                const orderResponse = await fetch(`${API_BASE_URL}/orders/`, {
+                    method: 'POST',
+                    headers: headers,
+                    body: JSON.stringify({}),
+                });
+
+                if (!orderResponse.ok) {
+                    const errorData = await orderResponse.json();
+                    throw new Error(`Failed to create order: ${JSON.stringify(errorData)}`);
+                }
+                const newOrder = await orderResponse.json();
+                const orderId = newOrder.id;
+
+                for (const cartItem of orderCart) {
+                    const addItemResponse = await fetch(`${API_BASE_URL}/orders/${orderId}/add_item/`, {
+                        method: 'POST',
+                        headers: headers,
+                        body: JSON.stringify({
+                            menu_item_id: cartItem.id,
+                            quantity: cartItem.quantity,
+                        }),
+                    });
+
+                    if (!addItemResponse.ok) {
+                        const errorData = await addItemResponse.json();
+                        throw new Error(`Failed to add item ${cartItem.name} to order: ${JSON.stringify(errorData)}`);
+                    }
+                }
+
+                showMessage('Order placed successfully!');
+                orderCart = [];
+                renderOrderCart();
+                await fetchAllData();
+                switchView('menu-view');
+            } catch (error) {
+                console.error("Error placing order:", error);
+                showMessage(`Failed to place order: ${error.message}`, 'error');
+            }
+        }
+
+        async function handleReservation(customerName, reservationTime, selectedTableId, numberOfGuests) {
+            try {
+                const csrftoken = getCookie('csrftoken');
+                const headers = {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrftoken,
+                };
+                if (isLoggedIn && authToken) {
+                    headers['Authorization'] = `Token ${authToken}`;
+                }
+
+                const response = await fetch(`${API_BASE_URL}/reservations/`, {
+                    method: 'POST',
+                    headers: headers,
+                    body: JSON.stringify({
+                        table: selectedTableId,
+                        customer_name: customerName,
+                        reservation_time: reservationTime,
+                        number_of_guests: numberOfGuests,
+                        is_confirmed: true,
+                    }),
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(`Failed to make reservation: ${JSON.stringify(errorData)}`);
+                }
+
+                showMessage('Table reserved successfully!');
+                document.getElementById('reservation-form').reset();
+                await fetchAllData();
+                switchView('menu-view');
+            } catch (error) {
+                console.error("Error making reservation:", error);
+                showMessage(`Failed to make reservation: ${error.message}`, 'error');
+            }
+        }
+
+        async function updateInventory(itemId, newStock) {
+            try {
+                if (!isLoggedIn || userRole !== 'admin') {
+                    showMessage('Unauthorized: Only admins can update inventory.', 'error');
+                    return;
+                }
+
+                const csrftoken = getCookie('csrftoken');
+                const headers = {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrftoken,
+                    'Authorization': `Token ${authToken}`,
+                };
+
+                const response = await fetch(`${API_BASE_URL}/menu-items/${itemId}/update_stock/`, {
+                    method: 'POST',
+                    headers: headers,
+                    body: JSON.stringify({ stock: newStock }),
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(`Failed to update stock: ${JSON.stringify(errorData)}`);
+                }
+                showMessage('Stock updated successfully!');
+                await fetchAllData();
+            } catch (error) {
+                console.error("Error updating inventory:", error);
+                showMessage(`Failed to update stock: ${error.message}`, 'error');
+            }
+        }
+
+        async function updateOrderStatus(orderId, newStatus) {
+            try {
+                if (!isLoggedIn || userRole !== 'admin') {
+                    showMessage('Unauthorized: Only admins can update order status.', 'error');
+                    return;
+                }
+
+                const csrftoken = getCookie('csrftoken');
+                const headers = {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrftoken,
+                    'Authorization': `Token ${authToken}`,
+                };
+
+                const response = await fetch(`${API_BASE_URL}/orders/${orderId}/update_status/`, {
+                    method: 'POST',
+                    headers: headers,
+                    body: JSON.stringify({ status: newStatus }),
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(`Failed to update order status: ${JSON.stringify(errorData)}`);
+                }
+                showMessage('Order status updated!');
+                await fetchAllData();
+            } catch (error) {
+                console.error("Error updating order status:", error);
+                showMessage(`Failed to update order status: ${error.message}`, 'error');
+            }
+        }
+
+        async function updateTableAvailability(tableId, isAvailable) {
+            try {
+                if (!isLoggedIn || userRole !== 'admin') {
+                    showMessage('Unauthorized: Only admins can update table availability.', 'error');
+                    return;
+                }
+
+                const csrftoken = getCookie('csrftoken');
+                const headers = {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrftoken,
+                    'Authorization': `Token ${authToken}`,
+                };
+
+                const response = await fetch(`${API_BASE_URL}/tables/${tableId}/set_availability/`, {
+                    method: 'POST',
+                    headers: headers,
+                    body: JSON.stringify({ is_available: isAvailable }),
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(`Failed to update table availability: ${JSON.stringify(errorData)}`);
+                }
+                showMessage('Table availability updated!');
+                await fetchAllData();
+            } catch (error) {
+                console.error("Error updating table availability:", error);
+                showMessage(`Failed to update table availability: ${error.message}`, 'error');
+            }
+        }
+
+        function updateNavVisibility() {
+            if (isLoggedIn) {
+                navLogin.classList.add('hidden');
+                navRegister.classList.add('hidden');
+                navLogout.classList.remove('hidden');
+                if (userRole === 'admin') {
+                    navAdmin.classList.remove('hidden');
+                } else {
+                    navAdmin.classList.add('hidden');
+                }
+            } else {
+                navLogin.classList.remove('hidden');
+                navRegister.classList.remove('hidden');
+                navLogout.classList.add('hidden');
+                navAdmin.classList.add('hidden');
+            }
+        }
+
+        function renderAllViews() {
+            renderMenuItems();
+            renderOrderCart();
+            renderReservationForm();
+            renderCurrentReservations();
+            renderAdminInventory();
+            renderAdminTables();
+            renderAdminOrders();
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            updateNavVisibility();
+            await fetchAllData();
+            renderAllViews();
+            switchView('menu-view');
+
+            navButtons.forEach(button => {
+                button.addEventListener('click', async (event) => {
+                    const viewId = `${event.target.id.replace('nav-', '')}-view`;
+                    if (event.target.id === 'nav-logout') {
+                        logoutUser();
+                    } else {
+                        switchView(viewId);
+                        if (viewId === 'admin-view') {
+                            await fetchAllData();
+                        }
+                    }
+                });
+            });
+
+            loginForm.addEventListener('submit', async (event) => {
+                event.preventDefault();
+                const username = document.getElementById('login-username').value;
+                const password = document.getElementById('login-password').value;
+                await loginUser(username, password);
+                loginForm.reset();
+            });
+
+            registerForm.addEventListener('submit', async (event) => {
+                event.preventDefault();
+                const username = document.getElementById('register-username').value;
+                const password = document.getElementById('register-password').value;
+                const first_name = document.getElementById('register-first-name').value;
+                const last_name = document.getElementById('register-last-name').value;
+                const email = document.getElementById('register-email').value;
+                
+                await registerUser(username, password, first_name, last_name, email);
+                registerForm.reset();
+            });
+
+            document.getElementById('place-order-btn').addEventListener('click', placeOrder);
+
+            document.getElementById('reservation-form').addEventListener('submit', async (event) => {
+                event.preventDefault();
+                const customerName = document.getElementById('reservation-customerName').value;
+                const reservationTime = document.getElementById('reservation-time').value;
+                const selectedTable = document.getElementById('reservation-table').value;
+                const numberOfGuests = parseInt(document.getElementById('reservation-guests').value, 10);
+
+                if (!selectedTable || !customerName || !reservationTime || !numberOfGuests) {
+                    showMessage('Please fill all reservation details.', 'error');
+                    return;
+                }
+                await handleReservation(customerName, reservationTime, parseInt(selectedTable, 10), numberOfGuests);
+            });
+        });
+    </script>
+</body>
+</html>
