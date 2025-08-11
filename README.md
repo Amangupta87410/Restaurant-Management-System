@@ -10,10 +10,22 @@ Customer Dashboard: Menu & Ordering
 ![](https://i.postimg.cc/7ZkNp3hT/Screenshot-2025-08-11-154850.png)
 
 Your Order (Shopping Cart)
+![](https://i.postimg.cc/C1zCjJP9/Screenshot-2025-08-11-155720.png)
+
+
 Table Reservation System
+![](https://i.postimg.cc/rs4SHsLJ/Screenshot-2025-08-11-155752.png)
+
 
 Admin Panel: Inventory & Table Management
+![](https://i.postimg.cc/XNBcqHyC/Screenshot-2025-08-11-155910.png)
+
+
+
 Admin Panel: Order Management
+![](https://i.postimg.cc/dtMRy28S/Screenshot-2025-08-11-155929.png)
+
+
 
 
 Features:
