@@ -9,11 +9,10 @@ Here’s a glimpse into the different modules of the application:
 Customer Dashboard: Menu & Ordering
 Your Order (Shopping Cart)
 Table Reservation System
+
 Admin Panel: Inventory & Table Management
 Admin Panel: Order Management
-Live Demo
-You can view the live version of this project here:
-https://amangupta87410.github.io/Restaurant-Management-System/
+
 
 Features:
 
