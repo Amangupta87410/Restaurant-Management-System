@@ -6,8 +6,9 @@ This is a comprehensive restaurant management system built with the Django frame
 Screenshots
 Here’s a glimpse into the different modules of the application:
 
-Customer Dashboard: Menu & Ordering
-![(https://i.postimg.cc/7ZkNp3hT/Screenshot-2025-08-11-154850.png)
+
+![Customer Dashboard: Menu & Ordering](https://i.postimg.cc/7ZkNp3hT/Screenshot-2025-08-11-154850.png)
+
 Your Order (Shopping Cart)
 Table Reservation System
 
